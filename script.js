@@ -5,7 +5,7 @@ const fullDate = now.toLocaleDateString('en-GB', {
   day: '2-digit',
   month: 'short',
   year: 'numeric'
-}).replace(/ /g, ' ').toUpperCase();
+}).toUpperCase();
 const textUpdates = [
   ['days', String(days)],
   ['day-badge', `DAY ${days}`],
