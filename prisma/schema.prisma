@@ -1,0 +1,42 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String             @id @default(cuid())
+  name              String?
+  email             String             @unique
+  passwordHash      String
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  goals             Goal[]
+  equipment         Equipment[]
+  plans             WorkoutPlan[]
+  sessions          WorkoutSession[]
+  skills            UserSkill[]
+  measurements      BodyMeasurement[]
+  recoveryLogs      RecoveryLog[]
+  nutritionLogs     NutritionLog[]
+  videoAnalyses     VideoAnalysis[]
+  conversations     AiConversation[]
+}
+
+model Goal { id String @id @default(cuid()); userId String; goal String; priority Int @default(1); user User @relation(fields:[userId],references:[id],onDelete:Cascade); @@index([userId]) }
+model Equipment { id String @id @default(cuid()); userId String; item String; available Boolean @default(true); user User @relation(fields:[userId],references:[id],onDelete:Cascade); @@index([userId]) }
+model Exercise { id String @id @default(cuid()); slug String @unique; name String; category String; difficulty String?; primaryMuscles String[]; instructions String?; safetyNotes String?; createdAt DateTime @default(now()); sets WorkoutSet[] }
+model WorkoutPlan { id String @id @default(cuid()); userId String; name String; goal String?; active Boolean @default(true); createdAt DateTime @default(now()); user User @relation(fields:[userId],references:[id],onDelete:Cascade); sessions WorkoutSession[]; @@index([userId,active]) }
+model WorkoutSession { id String @id @default(cuid()); userId String; planId String?; startedAt DateTime @default(now()); completedAt DateTime?; user User @relation(fields:[userId],references:[id],onDelete:Cascade); plan WorkoutPlan? @relation(fields:[planId],references:[id],onDelete:SetNull); sets WorkoutSet[]; @@index([userId,startedAt]) }
+model WorkoutSet { id String @id @default(cuid()); sessionId String; exerciseId String?; setNumber Int; targetReps Int?; actualReps Int?; targetSeconds Int?; actualSeconds Int?; load Float?; rpe Float?; rir Float?; completed Boolean @default(false); session WorkoutSession @relation(fields:[sessionId],references:[id],onDelete:Cascade); exercise Exercise? @relation(fields:[exerciseId],references:[id],onDelete:SetNull); @@index([sessionId]) }
+model Skill { id String @id @default(cuid()); slug String @unique; name String; category String; level Int @default(1); requirements Json; users UserSkill[] }
+model UserSkill { userId String; skillId String; progress Float @default(0); unlocked Boolean @default(false); updatedAt DateTime @updatedAt; user User @relation(fields:[userId],references:[id],onDelete:Cascade); skill Skill @relation(fields:[skillId],references:[id],onDelete:Cascade); @@id([userId,skillId]) }
+model BodyMeasurement { id String @id @default(cuid()); userId String; measuredAt DateTime @default(now()); weightKg Float?; waistCm Float?; notes String?; user User @relation(fields:[userId],references:[id],onDelete:Cascade); @@index([userId,measuredAt]) }
+model RecoveryLog { id String @id @default(cuid()); userId String; loggedAt DateTime @default(now()); sleepHours Float?; energy Int?; soreness Int?; stress Int?; user User @relation(fields:[userId],references:[id],onDelete:Cascade); @@index([userId,loggedAt]) }
+model NutritionLog { id String @id @default(cuid()); userId String; loggedAt DateTime @default(now()); mealName String?; calories Float?; proteinG Float?; carbsG Float?; fatG Float?; waterMl Float @default(0); user User @relation(fields:[userId],references:[id],onDelete:Cascade); @@index([userId,loggedAt]) }
+model VideoAnalysis { id String @id @default(cuid()); userId String; exerciseSlug String; storagePath String?; status String @default("queued"); reps Int?; formScore Float?; metrics Json; issues Json; createdAt DateTime @default(now()); user User @relation(fields:[userId],references:[id],onDelete:Cascade); @@index([userId,createdAt]) }
+model AiConversation { id String @id @default(cuid()); userId String; createdAt DateTime @default(now()); user User @relation(fields:[userId],references:[id],onDelete:Cascade); messages AiMessage[]; @@index([userId,createdAt]) }
+model AiMessage { id String @id @default(cuid()); conversationId String; role String; content String; createdAt DateTime @default(now()); conversation AiConversation @relation(fields:[conversationId],references:[id],onDelete:Cascade); @@index([conversationId,createdAt]) }
