@@ -1,23 +1,6 @@
 {
-  "name": "calisthenics-ai-coach",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {"dev":"next dev","build":"next build","start":"next start","lint":"next lint"},
-  "dependencies": {
-    "@supabase/ssr":"latest",
-    "@supabase/supabase-js":"latest",
-    "lucide-react":"latest",
-    "next":"16.3.0",
-    "react":"19.2.0",
-    "react-dom":"19.2.0",
-    "recharts":"latest"
-  },
-  "devDependencies": {
-    "@tailwindcss/postcss":"latest",
-    "@types/node":"latest",
-    "@types/react":"latest",
-    "@types/react-dom":"latest",
-    "tailwindcss":"latest",
-    "typescript":"latest"
-  }
+  "name":"calisthenics-ai-coach","version":"0.1.0","private":true,
+  "scripts":{"dev":"next dev","build":"next build","start":"next start","lint":"next lint","db:generate":"prisma generate","db:migrate":"prisma migrate dev","db:push":"prisma db push"},
+  "dependencies":{"bcryptjs":"latest","jose":"latest","lucide-react":"latest","next":"16.3.0","next-auth":"beta","react":"19.2.0","react-dom":"19.2.0","recharts":"latest","@prisma/client":"latest"},
+  "devDependencies":{"@tailwindcss/postcss":"latest","@types/node":"latest","@types/react":"latest","@types/react-dom":"latest","prisma":"latest","tailwindcss":"latest","typescript":"latest"}
 }
